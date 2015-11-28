@@ -1,27 +1,37 @@
 'use strict'
 
-let error = () =>
-    new Error()
+let error = s =>
+    new Error(s)
 
 let For = (init, pred, next) => {
-    let args = init
-    while (pred(...args)) args = next(...args)
-    return args
+    let xs = init
+    while (pred(...xs)) xs = next(...xs)
+    return xs
 }
 
-let get = (list, i, or) =>
-    i < list.length ? list[i] : or !== undefined ? or : error()
+let get = (xs, i, or) =>
+    i < xs.length ? xs[i] : or !== undefined ? or : error()
 
 let isInt = Number.isSafeInteger
+
+let fix = (x, i) =>
+    Math.round(x * i)
+
+let now = () =>
+    fix(performance.now(), 200)
 
 let draw = term =>
     isInt(term) ? new Text(term) : error()
 
 let world = 0
 
-requestAnimationFrame(t => {
-    let old = document.getElementById('frame')
-    let frame = draw(world)
-    frame.id = old.id
-    document.body.replaceChild(frame, old)
-})
+let drawFrame = t => {
+    let frame = document.body
+    frame.replaceChild(draw(world), frame.firstChild)
+    requestFrame()
+}
+
+let requestFrame = () =>
+    requestAnimationFrame(drawFrame)
+
+requestFrame()
