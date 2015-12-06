@@ -17,16 +17,18 @@ let isInt = Number.isSafeInteger
 let fix = (x, i) =>
     Math.round(x * i)
 
-let draw = term =>
-    isInt(term) ? new Text(term) : error()
+let int = i => ({
+    draw: () =>
+        new Text(i),
+})
 
-let world = 0
+let code = int(0)
 
 let input = []
 
 let drawFrame = t => {
     let frame = document.body
-    frame.replaceChild(draw(world), frame.firstChild)
+    frame.replaceChild(code.draw(), frame.firstChild)
     requestFrame()
 }
 
@@ -50,13 +52,13 @@ let pushInput = (e, key) =>
 addEventListener('keydown', e => {
     let key = e.keyIdentifier
     if (key.includes('+')) {
-        key = ({
+        key = {
             'U+0008': 'Backspace',
             'U+0009': 'Tab',
             'U+0010': 'ContextMenu',
             'U+001B': 'Escape',
             'U+007F': 'Delete',
-        })[key]
+        }[key]
         if (!key) return
     }
     if (key == 'Backspace' || key == 'Tab') e.preventDefault()
