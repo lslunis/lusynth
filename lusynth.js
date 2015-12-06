@@ -17,27 +17,35 @@ let isInt = Number.isSafeInteger
 let fix = (x, i) =>
     Math.round(x * i)
 
-let text = s =>
-    new Text(s)
+let lit = s => ({
+    draw: () =>
+        new Text(s),
+})
 
 let row = (...xs) => {
+    if (xs.length == 1) return xs[0].draw()
     let r = document.createElement('div')
     r.classList.add('row')
-    for (let x of xs) r.appendChild(x)
+    for (let x of xs) r.appendChild(x.draw())
     return r
 }
 
 let int = i => ({
     draw: () =>
-        text(i),
+        row(lit(i)),
 })
 
 let func = t => ({
     draw: () =>
-        row(text('λ'), t.draw()),
+        row(lit('λ'), t),
 })
 
-let code = func(int(0))
+let call = (f, x) => ({
+    draw: () =>
+        row(lit('('), f, lit(' '), x, lit(')')),
+})
+
+let code = call(func(int(0)), int(1))
 
 let input = []
 
