@@ -17,11 +17,6 @@ let isInt = Number.isSafeInteger
 let fix = (x, i) =>
     Math.round(x * i)
 
-let lit = s => ({
-    draw: () =>
-        new Text(s),
-})
-
 let row = (...xs) => {
     if (xs.length == 1) return xs[0].draw()
     let r = document.createElement('div')
@@ -30,20 +25,58 @@ let row = (...xs) => {
     return r
 }
 
-let int = i => ({
-    draw: () =>
-        row(lit(i)),
-})
+class Lit {
+    constructor(s) {
+        this.s = s
+    }
 
-let func = t => ({
-    draw: () =>
-        row(lit('λ'), t),
-})
+    draw() {
+        return new Text(this.s)
+    }
+}
 
-let call = (f, x) => ({
-    draw: () =>
-        row(lit('('), f, lit(' '), x, lit(')')),
-})
+let lit = s =>
+    new Lit(s)
+
+class Int {
+    constructor(i) {
+        this.i = i
+    }
+
+    draw() {
+        return row(lit(this.i))
+    }
+}
+
+let int = i =>
+    new Int(i)
+
+class Func {
+    constructor(t) {
+        this.t = t
+    }
+
+    draw() {
+        return row(lit('λ'), this.t)
+    }
+}
+
+let func = t =>
+    new Func(t)
+
+class Call {
+    constructor(f, x) {
+        this.f = f
+        this.x = x
+    }
+
+    draw() {
+        return row(lit('('), this.f, lit(' '), this.x, lit(')'))
+    }
+}
+
+let call = (f, x) =>
+    new Call(f, x)
 
 let code = call(func(int(0)), int(1))
 
