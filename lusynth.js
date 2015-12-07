@@ -17,61 +17,82 @@ let isInt = Number.isSafeInteger
 let fix = (x, i) =>
     Math.round(x * i)
 
+let box = (...xs) => {
+    let b = document.createElement('div')
+    for (let x of xs) b.appendChild(x)
+    return b
+}
+
+let col = (...xs) =>
+    box(...xs.map(x => box(x)))
+
+
 let row = (...xs) => {
-    if (xs.length == 1) return xs[0].draw()
-    let r = document.createElement('div')
+    let r = box(...xs)
     r.classList.add('row')
-    for (let x of xs) r.appendChild(x.draw())
     return r
 }
 
-class Lit {
-    constructor(s) {
-        this.s = s
+let text = s =>
+    new Text(s)
+
+class Term {
+    eval() {
+        return this
     }
 
-    draw() {
-        return new Text(this.s)
+    sub() {
+        throw error()
     }
 }
 
-let lit = s =>
-    new Lit(s)
-
-class Int {
+class Int extends Term {
     constructor(i) {
+        super()
         this.i = i
     }
 
     draw() {
-        return row(lit(this.i))
+        return text(this.i)
     }
 }
 
 let int = i =>
     new Int(i)
 
-class Func {
+class Func extends Term {
     constructor(t) {
+        super()
         this.t = t
     }
 
+    sub(x) {
+        return this.t
+    }
+
     draw() {
-        return row(lit('λ'), this.t)
+        return row(text('λ'), this.t.draw())
     }
 }
 
 let func = t =>
     new Func(t)
 
-class Call {
+class Call extends Term {
     constructor(f, x) {
+        super()
         this.f = f
         this.x = x
     }
 
+    eval() {
+        return this.f.eval().sub(this.x)
+    }
+
     draw() {
-        return row(lit('('), this.f, lit(' '), this.x, lit(')'))
+        return col(
+            row(text('('), this.f.draw(), text(' '), this.x.draw(), text(')')),
+            this.eval().draw())
     }
 }
 
