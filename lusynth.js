@@ -99,14 +99,13 @@ class Call extends Term {
 let call = (f, x) =>
     new Call(f, x)
 
-let code = call(func(int(0)), int(1))
+let code = call(call(func(func(int(0))), int(2)), int(1))
 
 let input = []
 
 let drawFrame = t => {
     let frame = document.body
     frame.replaceChild(code.draw(), frame.firstChild)
-    requestFrame()
 }
 
 let requestFrame = () =>
