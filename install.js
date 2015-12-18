@@ -4,14 +4,14 @@
 let childProcess = require('child_process')
 let fs = require('fs')
 
-let jade = require('jade')
 let packageElectron = require('electron-packager')
 
 
-process.chdir(__dirname)
-let name = 'Lusynth'
-fs.writeFileSync('index.html', jade.renderFile('index.jade', {name}))
+function exec(cmd, ...args) {
+    childProcess.spawnSync(cmd, args, {stdio: 'inherit'})
+}
 
+let name = 'Lusynth'
 let opts = {
     name,
     version: require('./package').devDependencies['electron-prebuilt'],
@@ -21,9 +21,13 @@ let opts = {
     out: 'out',
     overwrite: true,
 }
+
+process.chdir(__dirname)
+exec('jade', '.')
+exec('stylus', '.')
 packageElectron(opts, (err, dir) => {
     let app = `${name}.app`
     let path = `/Applications/${app}`
-    childProcess.execSync(`rm -rf ${path}`)
+    exec('rm', '-rf', path)
     fs.renameSync(`${dir}/${app}`, path)
 })
