@@ -4,7 +4,6 @@ let electron = require('electron')
 let app = electron.app
 let BrowserWindow = electron.BrowserWindow
 
-electron.crashReporter.start()
 let win = null
 
 app.on('ready', () => {
