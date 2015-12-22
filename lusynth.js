@@ -10,22 +10,30 @@ let For = (init, pred, next) => {
 }
 
 let get = (xs, i, or) =>
-    i < xs.length ? xs[i] : or !== undefined ? or : error()
+    0 <= i && i < xs.length ? xs[i] : or !== undefined ? or : error()
+
+let last = xs =>
+    get(xs, xs.length - 1)
 
 let isInt = Number.isSafeInteger
 
 let fix = (x, i) =>
     Math.round(x * i)
 
-let div = (c, ...xs) => {
+let div = (...xs) => {
     let d = document.createElement('div')
-    if (c) d.classList.add(c)
-    for (let x of xs) d.appendChild(x)
+    for (let x of xs) {
+        if (typeof x == 'string') d.classList.add(x)
+        else d.appendChild(x)
+    }
     return d
 }
 
-let text = s =>
-    new Text(s)
+let focusClasses = t =>
+    t == last(caret) ? ['focus'] : []
+
+let text = (s, classes) =>
+    div('text', ...classes, new Text(s))
 
 class Term {
     sub() {
@@ -44,7 +52,7 @@ class Int extends Term {
     }
 
     draw() {
-        return text(this.i)
+        return text(this.i, focusClasses(this))
     }
 }
 
@@ -62,12 +70,17 @@ class Func extends Term {
     }
 
     draw() {
-        return div('func', div('', this.t.draw()))
+        return div('func', ...focusClasses(this), this.t.draw())
     }
 }
 
 let func = t =>
     new Func(t)
+
+let callDiv = (c, f, x, r) =>
+    div(
+        'call', ...focusClasses(c),
+        div('f', f), div('x', x), ...(r ? [div('r', r)] : []))
 
 class Call extends Term {
     constructor(f, x) {
@@ -77,23 +90,22 @@ class Call extends Term {
     }
 
     draw() {
-        return div('call', div('f', this.f.draw()), div('x', this.x.draw()))
+        return callDiv(this, this.f.draw(), this.x.draw())
     }
 
     eval() {
         let f = this.f.eval()
         let x = {v: this.x, d: this.x.draw()}
         let r = f.v.sub(x.v).eval()
-        let d = div('call', div('f', f.d), div('x', x.d), div('r', r.d))
-        return {v: r.v, d}
+        return {v: r.v, d: callDiv(this, f.d, x.d, r.d)}
     }
 }
 
 let call = (f, x) =>
     new Call(f, x)
 
-let code = call(call(func(func(int(0))), int(2)), int(1))
-
+let code = call(call(func(func(call(func(int(0)), int(3)))), int(2)), int(1))
+let caret = [code]
 let input = []
 
 let drawFrame = t => {
