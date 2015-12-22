@@ -17,32 +17,23 @@ let isInt = Number.isSafeInteger
 let fix = (x, i) =>
     Math.round(x * i)
 
-let box = (...xs) => {
-    let b = document.createElement('div')
-    for (let x of xs) b.appendChild(x)
-    return b
-}
-
-let col = (...xs) =>
-    box(...xs.map(x => box(x)))
-
-
-let row = (...xs) => {
-    let r = box(...xs)
-    r.classList.add('row')
-    return r
+let div = (c, ...xs) => {
+    let d = document.createElement('div')
+    if (c) d.classList.add(c)
+    for (let x of xs) d.appendChild(x)
+    return d
 }
 
 let text = s =>
     new Text(s)
 
 class Term {
-    eval() {
-        return this
-    }
-
     sub() {
         throw error()
+    }
+
+    eval() {
+        return {v: this, d: this.draw()}
     }
 }
 
@@ -71,7 +62,7 @@ class Func extends Term {
     }
 
     draw() {
-        return row(text('λ'), this.t.draw())
+        return div('func', div('', this.t.draw()))
     }
 }
 
@@ -85,14 +76,16 @@ class Call extends Term {
         this.x = x
     }
 
-    eval() {
-        return this.f.eval().sub(this.x)
+    draw() {
+        return div('call', div('f', this.f.draw()), div('x', this.x.draw()))
     }
 
-    draw() {
-        return col(
-            row(text('('), this.f.draw(), text(' '), this.x.draw(), text(')')),
-            this.eval().draw())
+    eval() {
+        let f = this.f.eval()
+        let x = {v: this.x, d: this.x.draw()}
+        let r = f.v.sub(x.v).eval()
+        let d = div('call', div('f', f.d), div('x', x.d), div('r', r.d))
+        return {v: r.v, d}
     }
 }
 
@@ -105,7 +98,7 @@ let input = []
 
 let drawFrame = t => {
     let frame = document.body
-    frame.replaceChild(code.draw(), frame.firstChild)
+    frame.replaceChild(code.eval().d, frame.firstChild)
 }
 
 let requestFrame = () =>
