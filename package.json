@@ -3,13 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "./dev.js",
-    "install": "./install.js"
+    "dev": "./dev.js"
   },
   "devDependencies": {
-    "electron-packager": "5.2.0",
-    "electron-prebuilt": "0.36.1",
-    "jade": "1.11.0",
-    "stylus": "0.53.0"
+    "electron": "1.4.15"
   }
 }
