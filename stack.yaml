@@ -2,3 +2,51 @@ resolver: lts-15.3
 
 packages:
 - .
+
+ghc-options:
+  "$locals": >-
+    -Wall
+    -Wcompat
+    -Wincomplete-record-updates
+    -Wincomplete-uni-patterns
+    -Wno-missing-signatures
+    -Wno-name-shadowing
+    -Wredundant-constraints
+    -XAllowAmbiguousTypes
+    -XBangPatterns
+    -XConstraintKinds
+    -XDataKinds
+    -XDefaultSignatures
+    -XDeriveDataTypeable
+    -XDeriveFoldable
+    -XDeriveFunctor
+    -XDeriveGeneric
+    -XDeriveLift
+    -XDeriveTraversable
+    -XDerivingStrategies
+    -XEmptyCase
+    -XExistentialQuantification
+    -XExtendedDefaultRules
+    -XFlexibleContexts
+    -XFlexibleInstances
+    -XFunctionalDependencies
+    -XGADTs
+    -XGeneralizedNewtypeDeriving
+    -XInstanceSigs
+    -XKindSignatures
+    -XLambdaCase
+    -XMultiParamTypeClasses
+    -XMultiWayIf
+    -XNamedFieldPuns
+    -XNoMonomorphismRestriction
+    -XOverloadedStrings
+    -XPartialTypeSignatures
+    -XPatternSynonyms
+    -XRankNTypes
+    -XScopedTypeVariables
+    -XStandaloneDeriving
+    -XTupleSections
+    -XTypeApplications
+    -XTypeFamilies
+    -XTypeFamilyDependencies
+    -XTypeOperators
