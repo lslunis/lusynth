@@ -12,6 +12,12 @@ description:         <https://github.com/lslunis/lusynth#readme>
 
 dependencies:
 - base >= 4.7 && < 5
+- http-types
+- text
+- wai
+- wai-websockets
+- warp
+- websockets
 
 library:
   source-dirs: src
