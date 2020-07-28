@@ -1,23 +1,38 @@
 module Main where
-import Data.Text (Text)
+
+import Control.Concurrent.Async (race_)
+import Lib
+import Network.HTTP.Types (status400)
+import Network.Wai (responseLBS)
+import Network.Wai.Handler.Warp (defaultSettings, runSettings, setPort, setTimeout)
 import Network.Wai.Handler.WebSockets (websocketsOr)
-import Network.Wai.Handler.Warp (defaultSettings, setPort, runSettings)
 import Network.WebSockets.Connection
-    ( sendTextData
+    ( CompressionOptions(PermessageDeflateCompression)
     , acceptRequest
+    , connectionCompressionOptions
     , defaultConnectionOptions
     , defaultPermessageDeflate
-    , connectionCompressionOptions
-    , CompressionOptions(PermessageDeflateCompression)
+    , receiveData
+    , sendTextData
+    , withPingThread
     )
-import Network.Wai (responseLBS)
-import Network.HTTP.Types (status400)
+import Relude
+import System.Environment (lookupEnv)
 
-main = runSettings (setPort 1225 defaultSettings) app
+main = do
+    port <- fromMaybe 1225 . (readMaybe =<<) <$> lookupEnv "VIRTUAL_PORT"
+    runSettings (setPort port $ setTimeout 60 defaultSettings) app
 
 app = websocketsOr
     options
-    ((flip sendTextData ("hi" :: Text) =<<) . acceptRequest)
+    (\r -> do
+        c <- acceptRequest r
+        withPingThread c 20 (pure ()) $ withEvaluator
+            (\(put, get) -> race_
+                (forever $ put =<< receiveData c)
+                (forever $ sendTextData @Text c =<< get)
+            )
+    )
     (const ($ responseLBS status400 [] "WebSocket required"))
   where
     options = defaultConnectionOptions

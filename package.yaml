@@ -11,8 +11,11 @@ extra-source-files:
 description:         <https://github.com/lslunis/lusynth#readme>
 
 dependencies:
+- async
 - base >= 4.7 && < 5
 - http-types
+- relude
+- stm
 - text
 - wai
 - wai-websockets

@@ -38,6 +38,7 @@ ghc-options:
     -XMultiParamTypeClasses
     -XMultiWayIf
     -XNamedFieldPuns
+    -XNoImplicitPrelude
     -XNoMonomorphismRestriction
     -XOverloadedStrings
     -XPartialTypeSignatures

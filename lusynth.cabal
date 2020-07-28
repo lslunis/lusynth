@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c50ea7ad67cffcff43586938fbdf86b8e0bbdcdc6cec3ae298d1dd8b52d07924
+-- hash: 039b03f122cf33a154db8abd0bba094eb2936e7d3bdb0bd6b32e6f5b97eb89bd
 
 name:           lusynth
 version:        0.1.0.0
@@ -32,8 +32,11 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      async
+    , base >=4.7 && <5
     , http-types
+    , relude
+    , stm
     , text
     , wai
     , wai-websockets
@@ -49,9 +52,12 @@ executable lusynth-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      async
+    , base >=4.7 && <5
     , http-types
     , lusynth
+    , relude
+    , stm
     , text
     , wai
     , wai-websockets
@@ -68,9 +74,12 @@ test-suite lusynth-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      async
+    , base >=4.7 && <5
     , http-types
     , lusynth
+    , relude
+    , stm
     , text
     , wai
     , wai-websockets
